@@ -5,12 +5,14 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.css';
 //import Survivor from './components/survivor';
-import Survivors from './components/survivors';
+//import Survivors from './components/survivors';
+import ListSurvivors from './components/listSurvivors';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <Survivors />
+    <ListSurvivors/>
   </React.StrictMode>
 );
 

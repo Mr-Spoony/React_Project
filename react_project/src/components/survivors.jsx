@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
 import Survivor from './survivor';
 
+
 class Survivors extends Component {
     state = { 
         totalSurvivors: 0,
-        survivors: [
-            {id: 1, name: "Dave", huntXp: 10, alive: true},
-            {id: 2, name: "Jane", huntXp: 6, alive: true},
-            {id: 3, name: "Greg", huntXp: 0, alive: true},
-        ]
+        survivors: this.props.survivors
     }
     
-    
-
     createSurvivor = () => {
         this.setState();
     }
@@ -20,7 +15,7 @@ class Survivors extends Component {
     handleKillSurvivor = id => {
         this.setState({survivors: this.state.survivors.map(survivor => {
             if (survivor.id === id) {
-                survivor.alive = false;
+                survivor.data.alive = false;
                 return survivor;
             }
             return survivor;
@@ -30,7 +25,7 @@ class Survivors extends Component {
     handleXpIncrement = id => {
         this.setState({survivors: this.state.survivors.map(survivor => {
             if (survivor.id === id) {
-                survivor.huntXp++;
+                if(survivor.data.huntXp < 10)survivor.data.huntXp++;
                 return survivor;
             }
             return survivor;
@@ -40,7 +35,7 @@ class Survivors extends Component {
     handleXpDecrease = id => {
         this.setState({survivors: this.state.survivors.map(survivor => {
             if (survivor.id === id) {
-                survivor.huntXp--;
+                if(survivor.data.huntXp > 0)survivor.data.huntXp--;
                 return survivor;
             }
             return survivor;
@@ -74,7 +69,7 @@ class Survivors extends Component {
         const {totalSurvivors} = this.state;
         let count = 0;
         this.state.survivors.forEach(survivor => {
-            if(survivor.alive === true){
+            if(survivor.data.alive === true){
                 count++
             }
         });
