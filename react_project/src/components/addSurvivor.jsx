@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {collection, addDoc} from 'firebase/firestore'
 import { db } from '../init-firebase';
-//import Survivors from './survivors';
+import './addSurvivor.css';
 
 
-export default function AddSurvivor() {
+export default function AddSurvivor(props) {
     const [name, setName] = useState('')
 
     function handleSubmit(e) {
@@ -18,21 +18,28 @@ export default function AddSurvivor() {
         }).catch(error => {
             console.log(error.message)
         })
-        alert(name+" added to survivors")
+        props.setTrigger(false)
+        setName('')
     }
 
-    return (
-        <div>
-            <h4>Add Survivor</h4>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor='name'>Survivor Name</label>
-                <input 
-                id='name'
-                type="text" 
-                value={name} 
-                onChange={e => setName(e.target.value)}/>
-                <button type='submit'>Add Survivor</button>
-            </form>
+    return (props.trigger) ? (
+        <div className='popup'>
+            <div className='pupup-inner bg-secondary p-4 rounded'>
+                <h4 className='text-white'>Add Survivor</h4>
+                <form onSubmit={handleSubmit}>
+                    <label className='text-white' htmlFor='name'>Survivor Name</label>
+                    <input className='d-block' 
+                    id='name'
+                    type="text" 
+                    value={name} 
+                    onChange={e => setName(e.target.value)}/> 
+
+                    <button className='btn btn-success mt-2 me-2 btn-sm close-btn' type='submit'>Add Survivor</button>
+                    <button onClick={() => props.setTrigger(false)} className='mt-2 btn btn-danger btn-sm close-btn' type='submit'>Cancel</button>
+                {props.children}
+                </form>
+                
+            </div>
         </div>
-    )
+    ) : "";
 }

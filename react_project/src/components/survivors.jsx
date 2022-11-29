@@ -1,80 +1,131 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
+import {collection, onSnapshot, doc, setDoc, deleteDoc} from 'firebase/firestore'
+import { db } from '../init-firebase';
+import './survivors.css'
 import Survivor from './survivor';
+import AddSurvivor from './addSurvivor';
 
 
-class Survivors extends Component {
-    state = { 
-        totalSurvivors: 0,
-        survivors: this.props.survivors
+export default function Survivors() {
+    const [survivors, setSurvivors] = useState([]);
+    const [totalSurvivors, setTotalSurvivors] = useState(0);
+    const survivorCollectionRef = collection(db, 'survivors')
+    const [buttonPopup, setButtonPopup] = useState(false);
+
+    useEffect (() => {
+        getSurvivors()
+    }, []);
+
+    async function handleSurvivorDelete(id){
+        await deleteDoc(doc(db, "survivors", id));
     }
     
-    createSurvivor = () => {
-        this.setState();
-    }
-
-    handleKillSurvivor = id => {
-        this.setState({survivors: this.state.survivors.map(survivor => {
-            if (survivor.id === id) {
-                survivor.data.alive = false;
-                return survivor;
-            }
-            return survivor;
-        })});
-    }
-
-    handleXpIncrement = id => {
-        this.setState({survivors: this.state.survivors.map(survivor => {
-            if (survivor.id === id) {
-                if(survivor.data.huntXp < 10)survivor.data.huntXp++;
-                return survivor;
-            }
-            return survivor;
-        })});
-    }
-
-    handleXpDecrease = id => {
-        this.setState({survivors: this.state.survivors.map(survivor => {
+    function handleXpDecrease(id){
+        const newServivors = survivors.map(survivor => {
             if (survivor.id === id) {
                 if(survivor.data.huntXp > 0)survivor.data.huntXp--;
+                console.log(survivor)
                 return survivor;
             }
             return survivor;
-        })});
+        })
+        setSurvivors(newServivors)
     }
 
-    render() { 
-        return (
-        <div>
-            <span className={this.getBadgeClasses()}>{"Total Alive: " + this.formatPop()}</span>
-            <button onClick={this.createSurvivor} className='btn btn-secondary btn-sm'>Add Survivor</button>
-            { this.state.survivors.map(survivor =>
-                <Survivor 
-                key={survivor.id} 
-                onKill={this.handleKillSurvivor}
-                onIncrement={this.handleXpIncrement}
-                onDecrease={this.handleXpDecrease} 
-                survivor={survivor} 
-                selected={true}/>
-            )}
-        </div>);
+    function handleXpIncrement(id){
+        const newServivors = survivors.map(survivor => {
+            if (survivor.id === id) {
+                if(survivor.data.huntXp < 10)survivor.data.huntXp++;
+                console.log(survivor)
+                return survivor;
+            }
+            return survivor;
+        })
+        setSurvivors(newServivors)
     }
 
-    getBadgeClasses() {
-        let classes = "badge p-2 m-2 bg-";
-        classes += (this.state.totalSurvivors === 0 ? "warning" : "success");
+    function handleStatus(id){
+        const newServivors = survivors.map(survivor => {
+            if (survivor.id === id) {
+                if(survivor.data.alive === false){
+                    survivor.data.alive = true;
+                    setTotalSurvivors(totalSurvivors + 1)
+                } else{
+                    survivor.data.alive = false;
+                    setTotalSurvivors(totalSurvivors - 1)
+                }
+                console.log(survivor)
+                return survivor;
+            }
+            return survivor;
+        })
+        setSurvivors(newServivors) 
+    }
+
+    function getSurvivors() {
+        
+        onSnapshot(survivorCollectionRef, (snapshot) => {
+            const survivors = snapshot.docs.map(s => ({
+                data: s.data(), 
+                id: s.id,
+            }))
+            setSurvivors(survivors)
+            let count = 0
+            survivors.forEach(survivor => {
+                if(survivor.data.alive === true){
+                    setTotalSurvivors(count = count + 1)
+                }
+            });
+            if(survivors.length === 0){
+                setTotalSurvivors(0)
+            }
+        })
+        
+    }
+
+    function getBadgeClasses() {
+        let classes = "badge ms-1 p-2 bg-";
+        classes += (totalSurvivors === 0 ? "danger" : "success");
         return classes;
     }
 
-    formatPop(){
-        const {totalSurvivors} = this.state;
-        let count = 0;
-        this.state.survivors.forEach(survivor => {
-            if(survivor.data.alive === true){
-                count++
-            }
+    function updateSurvivors()  {
+        survivors.forEach(async survivor => {
+            const survivorDocRef = doc(db, "survivors", survivor.id);
+            await setDoc(survivorDocRef, {
+                name: survivor.data.name,
+                huntXp: survivor.data.huntXp,
+                alive: survivor.data.alive,
+            });
         });
-        return totalSurvivors === 0 ? 'All Dead' : count;
+        alert("updated to survivors")
     }
+    
+    return (
+        <div className='container'>
+            <AddSurvivor trigger={buttonPopup} setTrigger={setButtonPopup}>
+            </AddSurvivor>
+            <button onClick={() => updateSurvivors()} className='fs-6 fw-normal fontFamily btn btn-secondary btn-sm ms-2'>Update Survivors</button>
+            <button onClick={() => setButtonPopup(true)} className='fs-6 fw-normal fontFamily btn btn-secondary btn-sm ms-2'>Add Survivors</button>
+            <span className="fs-6 fw-normal fontFamily badge m-2 bg-secondary">
+                Total Survivors
+                <span className={getBadgeClasses()}>{totalSurvivors}</span>
+            </span>
+            <div className='ms-2'>
+                {survivors.map(survivor =>(
+                    <Survivor 
+                    key={survivor.id} 
+                    survivor={survivor} 
+                    selected={true}
+                    onStatus={handleStatus}
+                    onIncrement={handleXpIncrement}
+                    onDecrease={handleXpDecrease}
+                    onDelete={handleSurvivorDelete}/>
+                ))}
+            </div>
+            
+            
+            
+        </div>
+    )
 }
- 
-export default Survivors;

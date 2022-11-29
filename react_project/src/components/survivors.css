@@ -1,0 +1,21 @@
+.fontFamily {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.card {
+    width: 100%;
+    align-content: flex-start;
+}
+
+.container {
+    width: 100%;
+    align-content: center;
+}
+
+@media only screen and (max-width: 400px) {
+    .card {
+        display: flex;
+        flex-grow: 1;
+        align-content: flex-start;
+    }
+  }
