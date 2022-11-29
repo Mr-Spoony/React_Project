@@ -10,9 +10,10 @@
 .container {
     width: 100%;
     align-content: center;
+    justify-content: center;
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 800px) {
     .card {
         display: flex;
         flex-grow: 1;

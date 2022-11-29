@@ -5,8 +5,8 @@ class Survivor extends Component {
     render() {
         return (
             <div className='d-flex d-flex-grow' >
-                <span className='card fs-6 fw-normal fontFamily  badge bg-secondary mb-2 rounded'>
-                    <span className={"badge fs-6 fw-normal fontFamily p-2 m-2 " + this.getIsAliveName()}>{this.props.survivor.data.name}</span>
+                <span className='card shadow-sm fs-6 fw-normal fontFamily bg-secondary badge mb-2 rounded'>
+                    <span className={"badge  fs-6 fw-normal fontFamily p-2 m-2 " + this.getIsAliveName()}>{this.props.survivor.data.name}</span>
                     <span className={this.getBadgeClasses()}>{"Hunt XP: " + this.formatXp()}</span>
                     <button onClick={() => this.props.onIncrement(this.props.survivor.id)} className='fs-6 fw-normal fontFamily  btn btn-secondary btn-sm'>Add XP</button>
                     <button onClick={() => this.props.onDecrease(this.props.survivor.id)} className='fs-6 fw-normal fontFamily  btn btn-secondary btn-sm m-2'>Subtract XP</button>
@@ -33,7 +33,7 @@ class Survivor extends Component {
 
     formatXp(){
         const {huntXp} = this.props.survivor.data;
-        return huntXp === 10 ? 'Retired' : huntXp
+        return huntXp === 10 ? 'Retired' : huntXp === 0 ? 'New' : huntXp 
     }
 }
  

@@ -105,12 +105,15 @@ export default function Survivors() {
         <div className='container'>
             <AddSurvivor trigger={buttonPopup} setTrigger={setButtonPopup}>
             </AddSurvivor>
-            <button onClick={() => updateSurvivors()} className='fs-6 fw-normal fontFamily btn btn-secondary btn-sm ms-2'>Update Survivors</button>
-            <button onClick={() => setButtonPopup(true)} className='fs-6 fw-normal fontFamily btn btn-secondary btn-sm ms-2'>Add Survivors</button>
-            <span className="fs-6 fw-normal fontFamily badge m-2 bg-secondary">
+            <span className="d-block fs-6 fw-normal fontFamily badge ms-2 bg-secondary">
                 Total Survivors
                 <span className={getBadgeClasses()}>{totalSurvivors}</span>
             </span>
+            <span className='d-flex container my-2'>
+                <button onClick={() => updateSurvivors()} className='fs-6 fw-normal fontFamily btn btn-secondary btn-sm '>Update Survivors</button>
+                <button onClick={() => setButtonPopup(true)} className='fs-6 fw-normal fontFamily btn btn-secondary btn-sm ms-4'>Add Survivors</button>
+            </span>
+            
             <div className='ms-2'>
                 {survivors.map(survivor =>(
                     <Survivor 
